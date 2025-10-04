@@ -21,16 +21,40 @@ rag_app/
 ├─ README.md
 ├─ main.py
 ├─ pyproject.toml
+├─ config/
+│  ├─ __init__.py
+│  └─ settings.py
 ├─ backend/
 │  ├─ __init__.py
-│  └─ api.py                 # FastAPI service (entry point to implement)
+│  ├─ app.py                 # FastAPI app entry (app = FastAPI())
+│  ├─ routers/
+│  │  ├─ __init__.py
+│  │  ├─ health.py
+│  │  ├─ search.py
+│  │  └─ agent.py
+│  ├─ schemas/
+│  │  ├─ __init__.py
+│  │  ├─ search.py
+│  │  └─ agent.py
+│  └─ services/
+│     ├─ __init__.py
+│     └─ retrieval.py
 ├─ frontend/
 │  ├─ __init__.py
-│  └─ app.py                 # Streamlit UI (entry point to implement)
-└─ src/
+│  └─ app.py                 # Streamlit UI (def main())
+├─ core/
+│  ├─ __init__.py
+│  ├─ ingest.py
+│  ├─ chunk.py
+│  ├─ index.py               # (placeholder)
+│  ├─ search_lexical.py      # (placeholder)
+│  ├─ search_vector.py       # (optional placeholder)
+│  └─ agent.py               # (placeholder)
+└─ db/
    ├─ __init__.py
-   └─ core/                  # Place for domain logic, indexing, tools
-      └─ __init__.py
+   ├─ session.py             # (placeholder SQLite wiring)
+   ├─ chroma/                # (optional vector backend)
+   └─ sqllite/               # existing folder
 ```
 
 ## Prerequisites
@@ -65,13 +89,13 @@ If you prefer a file, add `.env` (and do not commit secrets).
 
 ## Running (after implementing entry points)
 
-- Backend (FastAPI): ensure `rag_app/backend/api.py` defines a FastAPI app called `app`.
+- Backend (FastAPI): `rag_app/backend/app.py` exposes a FastAPI app called `app` and includes `/health`, `/search`, `/agent` routers (placeholders).
 
 ```bash
-uv run uvicorn rag_app.backend.api:app --reload --port 8000
+uv run uvicorn rag_app.backend.app:app --reload --port 8000
 ```
 
-- Frontend (Streamlit): ensure `rag_app/frontend/app.py` contains a Streamlit app.
+- Frontend (Streamlit): `rag_app/frontend/app.py` contains a minimal Streamlit app.
 
 ```bash
 uv run streamlit run rag_app/frontend/app.py
@@ -85,17 +109,22 @@ uv run python rag_app/main.py
 
 ## Development notes
 
-- **Backend contracts**: Define HTTP routes in `rag_app/backend/api.py` that the UI will call (e.g., `/search`, `/ask`).
-- **Core logic**: Put ingestion, indexing, search tools, and agent initialization under `rag_app/src/core/` and import them from backend/frontend.
+- **Backend contracts**: HTTP routes live under `rag_app/backend/routers/` (e.g., `/search`, `/agent/ask`).
+- **Core logic**: Put ingestion, indexing, search tools, and agent initialization under `rag_app/core/` and import them from backend/frontend.
 - **State**: Start with `minsearch` in-memory index; persist to disk or external store if needed later.
 - **Models**: Default to text search first; add embeddings (`sentence-transformers`) when necessary.
 - **Secrets**: Use environment variables; never commit keys.
 
+## Vector backend
+
+- **MinSearch only (default)**: simplest lexical search, zero extra setup. Good for small corpora or when queries match document wording.
+- **Chroma (optional)**: add semantic vector search with on-disk persistence. If you enable it, add `chromadb` to dependencies and configure a storage path via `CHROMA_DIR`. Use a small adapter in `core/search_vector.py` and combine with lexical results in `backend/services/retrieval.py`.
+
 ## Suggested next steps
 
-- Implement `FastAPI` app in `rag_app/backend/api.py` with routes for search and agent answers.
+- Flesh out routes in `rag_app/backend/routers/` for search and agent answers.
 - Build `Streamlit` UI in `rag_app/frontend/app.py` and wire it to backend endpoints.
-- Add ingestion/indexing utilities in `rag_app/src/core/` (download, chunk, index).
+- Add ingestion/indexing utilities in `rag_app/core/` (download, chunk, index).
 - Add basic evaluations and logging before deploying.
 
 ## Troubleshooting
