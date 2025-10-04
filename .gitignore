@@ -6,3 +6,7 @@ build
 email_materials
 *.egg-info
 uv.lock
+*.pkl
+*.pyc
+*.json
+*.log
