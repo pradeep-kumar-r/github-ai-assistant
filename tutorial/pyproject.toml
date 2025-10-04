@@ -1,0 +1,22 @@
+[project]
+name = "tutorial"
+version = "0.1.0"
+description = "A tutorial for building an end to end Agentic RAG pipeline using vector search"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "groq>=0.31.1",
+    "minsearch>=0.0.4",
+    "openai>=1.109.1",
+    "pandas>=2.3.2",
+    "pydantic-ai>=1.0.13",
+    "python-dotenv>=1.1.1",
+    "python-frontmatter>=1.1.0",
+    "requests>=2.32.5",
+    "sentence-transformers>=5.1.1",
+]
+
+[dependency-groups]
+dev = [
+    "jupyter>=1.1.1",
+]
