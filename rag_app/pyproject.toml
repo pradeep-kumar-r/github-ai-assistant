@@ -1,0 +1,25 @@
+[project]
+name = "rag_app"
+version = "0.1.0"
+description = """Agentic RAG App that acts as a primitive tech assistant, 
+    answering questions about coding, software development, and programming.
+
+    It has a streamlit front end with a FastAPI backend.
+
+    It uses OpenAI's GPT-4o-mini model to generate responses, 
+    and uses an in-memory vector database (MinSearch) to store the knowledge base needed for vector search.
+    
+"""
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "minsearch>=0.0.5",
+    "openai>=1.108.2",
+    "pydantic-ai==1.0.9",
+    "python-frontmatter>=1.1.0",
+    "streamlit>=1.50.0",
+    "sentence-transformers>=2.2.2",
+    "fastapi>=0.104.1",
+    "pydantic>=2.7.2",
+    "pandas>=2.2.0"
+]
