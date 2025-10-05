@@ -1,0 +1,46 @@
+[MASTER]
+# Use multiple processes to speed up Pylint
+jobs=1
+
+# Pickle collected data for later comparisons
+persistent=yes
+
+# List of plugins (as comma separated values of python module names)
+load-plugins=
+
+[MESSAGES CONTROL]
+# Disable specific warnings
+disable=
+    UP035,  # use-implicit-namespace-packages
+    C0111,  # missing-docstring
+    W0201,  # attribute-defined-outside-init
+    W293,  # blank line contains whitespace
+    C0103,  # invalid-name
+    R0903,  # too-few-public-methods
+    W0212,  # protected-access
+    E1101,  # no-member (fixes loguru dynamic attributes issue)
+    W0703,  # broad-except (allow catching general Exception)
+
+[BASIC]
+# Good variable names which should always be accepted
+good-names=i,j,k,ex,Run,_,id,pk,db,fm,zf
+
+[DESIGN]
+# Maximum number of arguments for function / method
+max-args=7
+
+# Maximum number of attributes for a class
+max-attributes=10
+
+[FORMAT]
+# Maximum number of characters on a single line
+max-line-length=120
+
+[IMPORTS]
+# Allow wildcard imports from specific modules
+allow-wildcard-with-all=no
+
+[TYPECHECK]
+# List of members which are set dynamically and missed by pylint inference
+# This fixes the loguru logger issue
+generated-members=loguru.logger.*

@@ -16,10 +16,35 @@ dependencies = [
     "minsearch>=0.0.5",
     "openai>=1.108.2",
     "pydantic-ai==1.0.9",
+    "langgraph>=0.1.0",
     "python-frontmatter>=1.1.0",
     "streamlit>=1.50.0",
     "sentence-transformers>=2.2.2",
     "fastapi>=0.104.1",
     "pydantic>=2.7.2",
-    "pandas>=2.2.0"
+    "pandas>=2.2.0",
+    # "loguru>=0.7.3",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.6.9",
+    "black>=24.12b0",
+    "isort>=5.12.0",
+    "loguru>=0.7.3"
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "T20"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "lf"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
