@@ -1,13 +1,13 @@
+
 from pydantic import BaseModel
-from typing import Optional
 
 
 class AskRequest(BaseModel):
     question: str
-    conversation_id: Optional[str] = None
+    conversation_id: str | None = None
 
 
 class AskResponse(BaseModel):
     answer: str
-    conversation_id: Optional[str] = None
+    conversation_id: str | None = None
     # Optional: add references/citations later

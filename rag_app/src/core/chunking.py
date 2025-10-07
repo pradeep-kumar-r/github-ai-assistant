@@ -1,30 +1,24 @@
-from abc import ABC, abstractmethod
-from typing import List, Dict
-import requests
-from zipfile import ZipFile
-from io import BytesIO
 import pickle
-import frontmatter as fm
-import os
 import re
-from .llm import LLM
+from abc import ABC, abstractmethod
+
 from ..logger import logger
-from ..constants import ROOT_DIR
+from .llm import LLM
 
 
 class Chunker(ABC):
     def __init__(self):
         self.chunks: list[dict] = []
-    
+
     @abstractmethod
-    def chunk(self, text: str) -> List[Dict]:
+    def chunk(self, text: str) -> list[dict]:
         pass
 
     def save_chunks(self, path: str) -> None:
         if not self.chunks:
             msg = "WARNING: No chunks to save. It is empty"
             logger.warning(msg)
-        
+
         with open(path, "wb") as f:
             pickle.dump(self.chunks, f)
             logger.info(f"Saved {len(self.chunks)} chunks to {path}")
@@ -52,19 +46,19 @@ class SWChunker(Chunker):
 
     def save_chunks(self, path: str) -> None:
         super().save_chunks(path)
-        
+
 
 class ParagraphChunker(Chunker):
     """Paragraph Chunker."""
     def __init__(self):
         super().__init__()
-    
+
     def chunk(self, text: str) -> list[dict]:
         paragraphs = re.split(r"\n\s*\n", text.strip())
         for i, paragraph in enumerate(paragraphs):
             self.chunks.append({"index": i, "content": paragraph})
         return self.chunks
-    
+
     def save_chunks(self, path: str) -> None:
         super().save_chunks(path)
 
@@ -74,12 +68,12 @@ class SectionChunker(Chunker):
     def __init__(self, level: int = 2):
         super().__init__()
         self.level = level
-    
+
     def chunk(self, text: str) -> list[dict]:
         header_pattern = r'^(#{' + str(self.level) + r'} )(.+)$'
         pattern = re.compile(header_pattern, re.MULTILINE)
         parts = pattern.split(text)
-        
+
         for i in range(1, len(parts),3):
             header = parts[i] + parts[i+1] # "## " + "Title"
             header = header.strip()
@@ -90,10 +84,10 @@ class SectionChunker(Chunker):
                 section = f'{header}\n\n{content}'
             else:
                 section = header
-            
+
             self.chunks.append({"index": i//3, "content": section})
         return self.chunks
-    
+
     def save_chunks(self, path: str) -> None:
         super().save_chunks(path)
 

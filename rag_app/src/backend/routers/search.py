@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from rag_app.backend.schemas.search import SearchRequest, SearchResponse, SearchHit
+from rag_app.backend.schemas.search import SearchHit, SearchRequest, SearchResponse
 
 router = APIRouter()
 

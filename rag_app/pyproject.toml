@@ -13,7 +13,6 @@ description = """Agentic RAG App that acts as a primitive tech assistant,
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "minsearch>=0.0.5",
     "openai>=1.108.2",
     "pydantic-ai==1.0.9",
     "langgraph>=0.1.0",
@@ -23,7 +22,15 @@ dependencies = [
     "fastapi>=0.104.1",
     "pydantic>=2.7.2",
     "pandas>=2.2.0",
-    # "loguru>=0.7.3",
+    "uvicorn[standard]>=0.27.0",
+    "chromadb>=0.4.22",
+    "sqlalchemy>=2.0.25",
+    "psycopg2-binary>=2.9.9",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-multipart>=0.0.6",
+    "httpx>=0.26.0",
+    "requests>=2.31.0",
 ]
 
 [project.optional-dependencies]
