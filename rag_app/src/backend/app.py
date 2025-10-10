@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from ..db.database import init_db
+from ..db.postgres import init_db
 from ..logger import logger
 from .routers import chat, health, repository
 

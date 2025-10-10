@@ -1,8 +1,10 @@
+"""PostgreSQL database configuration and session management."""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from ..config.settings import settings
-from ..logger import logger
+from ...config.settings import settings
+from ...logger import logger
 from .models import Base
 
 # Create database engine

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from ...config.settings import settings
 from ...db.chroma.client import ChromaVectorStore
-from ...db.database import get_db
+from ...db.postgres import get_db
 from ..schemas.repository import IngestionResult, RepositoryDelete, RepositoryIngest, RepositoryInfo
 from ..services.ingestion import IngestionService
 

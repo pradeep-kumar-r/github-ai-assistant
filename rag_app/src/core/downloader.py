@@ -1,4 +1,3 @@
-import pickle
 from io import BytesIO
 from zipfile import ZipFile
 
@@ -8,7 +7,7 @@ import requests
 from ..logger import logger
 
 
-class DataLoader:
+class RepoDownloader:
     def __init__(self):
         self.url_prefix: str = "https://codeload.github.com"
         self.repo_data: list[dict] = []
@@ -53,8 +52,8 @@ class DataLoader:
                     with zf.open(filename, "r") as f:
                         content = f.read().decode(encoding="utf-8", errors="ignore")
                     data = fm.load(content).to_dict()
-                    data['filename'] = filename
-                    data['url'] = url
+                    data["filename"] = filename
+                    data["url"] = url
                     self.repo_data.append(data)
                     file_count += 1
                     logger.info(f"Added file to knowledge base -> {filename}")
@@ -65,13 +64,3 @@ class DataLoader:
         zf.close()
         logger.info(f"Processed {file_count} files from repository -> {url}")
         return self.repo_data
-
-    def load_existing_repo_data(self, path: str) -> None:
-        with open(path, "rb") as f:
-            self.repo_data = pickle.load(f)
-            logger.info(f"Loaded existing repo data from {path}")
-
-    def save_repo_data(self, path: str) -> None:
-        with open(path, "wb") as f:
-            pickle.dump(self.repo_data, f)
-            logger.info(f"Saved repo data to {path}")

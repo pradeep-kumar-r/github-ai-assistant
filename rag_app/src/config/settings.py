@@ -12,10 +12,7 @@ class Settings(BaseModel):
 
     # PostgreSQL Database
     database_url: str = Field(
-        default_factory=lambda: os.getenv(
-            "DATABASE_URL",
-            "postgresql://rag_user:rag_password@postgres:5432/rag_db"
-        )
+        default_factory=lambda: os.getenv("DATABASE_URL", "postgresql://rag_user:rag_password@postgres:5432/rag_db")
     )
 
     # ChromaDB
@@ -23,7 +20,9 @@ class Settings(BaseModel):
     chroma_collection_name: str = Field(default_factory=lambda: os.getenv("CHROMA_COLLECTION_NAME", "rag_documents"))
 
     # Chunking
-    chunk_strategy: str = Field(default_factory=lambda: os.getenv("CHUNK_STRATEGY", "section"))  # section, paragraph, sliding_window
+    chunk_strategy: str = Field(
+        default_factory=lambda: os.getenv("CHUNK_STRATEGY", "section")
+    )  # section, paragraph, sliding_window
     chunk_size: int = Field(default_factory=lambda: int(os.getenv("CHUNK_SIZE", "2000")))
     chunk_overlap: int = Field(default_factory=lambda: int(os.getenv("CHUNK_OVERLAP", "200")))
     section_level: int = Field(default_factory=lambda: int(os.getenv("SECTION_LEVEL", "2")))

@@ -4,10 +4,10 @@ from sqlalchemy.orm import Session
 
 from ...config.settings import settings
 from ...core.chunking import LLMChunker, ParagraphChunker, SectionChunker, SWChunker
-from ...core.ingestion import DataLoader
+from ...core.downloader import RepoDownloader
 from ...core.llm import OpenAILLM
 from ...db.chroma.client import ChromaVectorStore
-from ...db.models import Repository
+from ...db.postgres.models import Repository
 from ...logger import logger
 
 
@@ -34,10 +34,7 @@ class IngestionService:
         elif strategy == "paragraph":
             return ParagraphChunker()
         elif strategy == "sliding_window":
-            return SWChunker(
-                chunk_size=settings.chunk_size,
-                chunk_overlap=settings.chunk_overlap
-            )
+            return SWChunker(chunk_size=settings.chunk_size, chunk_overlap=settings.chunk_overlap)
         elif strategy == "llm":
             llm = OpenAILLM(api_key=settings.openai_api_key)
             llm.setup(model=settings.openai_model)
@@ -65,7 +62,7 @@ class IngestionService:
                     "message": f"Repository already indexed: {repo_url}",
                     "repo_id": existing_repo.id,
                     "file_count": existing_repo.file_count,
-                    "chunk_count": existing_repo.chunk_count
+                    "chunk_count": existing_repo.chunk_count,
                 }
             else:
                 # Update existing record
@@ -77,12 +74,7 @@ class IngestionService:
             repo_owner, repo_name = DataLoader._parse_url(repo_url)
 
             # Create new repository record
-            repo = Repository(
-                url=repo_url,
-                owner=repo_owner,
-                name=repo_name,
-                ingestion_status="processing"
-            )
+            repo = Repository(url=repo_url, owner=repo_owner, name=repo_name, ingestion_status="processing")
             self.db.add(repo)
             self.db.commit()
             self.db.refresh(repo)
@@ -102,13 +94,13 @@ class IngestionService:
             all_chunks = []
 
             for doc in repo_data:
-                content = doc.get('content', '')
+                content = doc.get("content", "")
                 if content:
                     chunks = chunker.chunk(content)
                     # Add document metadata to each chunk
                     for chunk in chunks:
-                        chunk['filename'] = doc.get('filename', 'unknown')
-                        chunk['repo_url'] = repo_url
+                        chunk["filename"] = doc.get("filename", "unknown")
+                        chunk["repo_url"] = repo_url
                     all_chunks.extend(chunks)
 
             chunk_count = len(all_chunks)
@@ -133,7 +125,7 @@ class IngestionService:
                 "repo_id": repo.id,
                 "file_count": file_count,
                 "chunk_count": chunk_count,
-                "indexed_count": indexed_count
+                "indexed_count": indexed_count,
             }
 
         except Exception as e:
@@ -144,11 +136,7 @@ class IngestionService:
             repo.error_message = str(e)
             self.db.commit()
 
-            return {
-                "status": "error",
-                "message": f"Failed to index repository: {str(e)}",
-                "repo_id": repo.id
-            }
+            return {"status": "error", "message": f"Failed to index repository: {str(e)}", "repo_id": repo.id}
 
     def get_all_repositories(self) -> list[dict]:
         """Get all indexed repositories.
@@ -167,7 +155,7 @@ class IngestionService:
                 "chunk_count": repo.chunk_count,
                 "status": repo.ingestion_status,
                 "error": repo.error_message,
-                "created_at": repo.created_at.isoformat() if repo.created_at else None
+                "created_at": repo.created_at.isoformat() if repo.created_at else None,
             }
             for repo in repos
         ]
@@ -184,10 +172,7 @@ class IngestionService:
         repo = self.db.query(Repository).filter(Repository.url == repo_url).first()
 
         if not repo:
-            return {
-                "status": "not_found",
-                "message": f"Repository not found: {repo_url}"
-            }
+            return {"status": "not_found", "message": f"Repository not found: {repo_url}"}
 
         try:
             # Delete from vector store
@@ -197,15 +182,8 @@ class IngestionService:
             self.db.delete(repo)
             self.db.commit()
 
-            return {
-                "status": "success",
-                "message": f"Deleted repository: {repo_url}",
-                "chunks_deleted": deleted_count
-            }
+            return {"status": "success", "message": f"Deleted repository: {repo_url}", "chunks_deleted": deleted_count}
 
         except Exception as e:
             logger.error(f"Failed to delete repository {repo_url}: {str(e)}")
-            return {
-                "status": "error",
-                "message": f"Failed to delete repository: {str(e)}"
-            }
+            return {"status": "error", "message": f"Failed to delete repository: {str(e)}"}
