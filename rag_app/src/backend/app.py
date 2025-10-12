@@ -26,7 +26,7 @@ app = FastAPI(
     title="RAG App API",
     description="API for GitHub repository indexing and RAG-based Q&A",
     version="0.1.0",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 # CORS middleware for Streamlit frontend
@@ -50,10 +50,5 @@ async def root():
     return {
         "message": "RAG App API",
         "version": "0.1.0",
-        "endpoints": {
-            "health": "/health",
-            "docs": "/docs",
-            "repository": "/repository",
-            "chat": "/chat"
-        }
+        "endpoints": {"health": "/health", "docs": "/docs", "repository": "/repository", "chat": "/chat"},
     }
